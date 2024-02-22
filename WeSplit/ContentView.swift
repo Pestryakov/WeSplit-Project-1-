@@ -3,7 +3,7 @@
 //  WeSplit
 //
 //  Created by Maxim P on 17/02/2024.
-// Подсчет суммы которую должен заплатить каждый человек в зависимости от общей стоимости, выбранного процента чаевых и количества человек
+// Подсчет суммы, которую должен заплатить каждый человек, в зависимости от общей стоимости, выбранного процента чаевых и количества человек
 
 import SwiftUI
 
@@ -12,18 +12,18 @@ struct ContentView: View {
     @State private var numberOfPeople = 2
     @State private var tipPercentage = 20
     @FocusState private var amountIsFocused: Bool
+    let localCurrency = Locale.current.currency?.identifier ?? "USD"
     
     let tipPercenteges = [10, 15, 20, 25, 0]
     
-    var totalPerPerson: Double {
-        let peopleCount = Double(numberOfPeople + 2)
+    var grandTotal: Double {
         let tipSelection = Double(tipPercentage)
-        
         let tipValue = checkAmount / 100 * tipSelection
-        let grandTotal = checkAmount + tipValue
-        let amountPerPerson = grandTotal / peopleCount
-        
-        return amountPerPerson
+        return checkAmount + tipValue
+    }
+    
+    var totalPerPerson: Double {
+        grandTotal / Double(numberOfPeople + 2)
     }
     
     var body: some View {
@@ -51,8 +51,21 @@ struct ContentView: View {
                     .pickerStyle(.segmented)
                 }
                 
-                Section{
-                    Text(totalPerPerson, format: .currency(code: Locale.current.currency?.identifier ?? "USD"))
+//                Section("How much do you want to tip?") {
+//                    Picker("Tip percentage", selection: $tipPercentage) {
+//                        ForEach(0..<101) {
+//                            Text($0, format: .percent)
+//                        }
+//                    }
+//                  
+//                }
+                
+                Section("Total Amount") {
+                    Text(grandTotal, format: .currency(code: localCurrency))
+                }
+                
+                Section("Amount per person"){
+                    Text(totalPerPerson, format: .currency(code: localCurrency))
                         .keyboardType(.decimalPad)
                 }
             }
